@@ -1,6 +1,7 @@
 import os
 import random
 import re
+import numpy
 import sys
 
 DAMPING = 0.85
@@ -81,8 +82,22 @@ def sample_pagerank(corpus, damping_factor, n):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
 
+    result = dict()
+    for k in corpus.keys():
+        #each page rank starts out as 0 and each time the page is chosen the page rank will go up by 1/n
+        result[k] = 0
+
+    page = list(corpus.keys())[random.randint(0, len(corpus) - 1)]
+    result[page] += 1/n
+
+    for i in range(n - 1):
+        tm = transition_model(corpus, page, damping_factor)
+        option_list = list(tm.keys())
+        weights = list(tm.values())
+        page = numpy.random.choice(option_list, 1, p=weights)[0]
+        result[page] += 1/n
+    return result
 
 def iterate_pagerank(corpus, damping_factor):
     """
@@ -93,6 +108,9 @@ def iterate_pagerank(corpus, damping_factor):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
+
+
+
     raise NotImplementedError
 
 
