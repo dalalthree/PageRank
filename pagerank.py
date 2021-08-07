@@ -2,6 +2,7 @@ import os
 import random
 import re
 import numpy
+import copy
 import sys
 
 DAMPING = 0.85
@@ -108,11 +109,45 @@ def iterate_pagerank(corpus, damping_factor):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
+    # still need to work with pages that have no links
 
-
-
-    raise NotImplementedError
-
+    result = dict()
+    for k in corpus.keys():
+        result[k] = 1/len(corpus)
+    
+    first = True
+    count = 0
+    while count < 9 or first:
+        first = False
+        previous = copy.deepcopy(result)
+        for page in corpus.keys():
+            linkers = getLinkingPages(corpus, page)
+            result[page] = (1 - damping_factor)/len(corpus)
+            addition = 0
+            for p in linkers.keys():
+                addition += result[p]/linkers[p]
+            addition *= damping_factor
+            result[page] += addition
+        if (checkChange(previous, result)):
+            count += 1
+        else:
+            count = 0
+        
+    return result
+            
+def getLinkingPages(corpus, page):
+    result = dict()
+    
+    for k in corpus.keys():
+        if page in corpus[k]:
+            result[k] = len(corpus[k])
+    return result
+     
+def checkChange(past, current):
+    for k in past.keys():
+        if abs(past[k] - current[k]) > .001:
+            return True
+    return False
 
 if __name__ == "__main__":
     main()
