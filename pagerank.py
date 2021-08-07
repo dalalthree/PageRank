@@ -117,7 +117,7 @@ def iterate_pagerank(corpus, damping_factor):
     
     first = True
     count = 0
-    while count < 9 or first:
+    while count < 100 or first:
         first = False
         previous = copy.deepcopy(result)
         for page in corpus.keys():
@@ -132,22 +132,21 @@ def iterate_pagerank(corpus, damping_factor):
             count += 1
         else:
             count = 0
-        
     return result
             
 def getLinkingPages(corpus, page):
     result = dict()
     
     for k in corpus.keys():
-        if page in corpus[k]:
+        if page in corpus[k] or len(corpus[k]) == 0:
             result[k] = len(corpus[k])
     return result
      
 def checkChange(past, current):
     for k in past.keys():
         if abs(past[k] - current[k]) > .001:
-            return True
-    return False
+            return False
+    return True
 
 if __name__ == "__main__":
     main()
