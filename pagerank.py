@@ -68,9 +68,8 @@ def transition_model(corpus, page, damping_factor):
 
     for k in corpus.keys():
         output[k] = 1/len(corpus) * (1-damping_factor)
-        if k in corpus[page]:
-            output[k] += 1/len(corpus[page]) * damping_factor
-    
+        if k in corpus[page] or len(corpus[page]) == 0:
+            output[k] += 1/(len(corpus[page]) if len(corpus[page]) > 0 else len(corpus)) * damping_factor
     return output
 
 
@@ -109,7 +108,6 @@ def iterate_pagerank(corpus, damping_factor):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    # still need to work with pages that have no links
 
     result = dict()
     for k in corpus.keys():
@@ -139,7 +137,7 @@ def getLinkingPages(corpus, page):
     
     for k in corpus.keys():
         if page in corpus[k] or len(corpus[k]) == 0:
-            result[k] = len(corpus[k])
+            result[k] = len(corpus[k]) if len(corpus[k]) > 0 else len(corpus)
     return result
      
 def checkChange(past, current):
